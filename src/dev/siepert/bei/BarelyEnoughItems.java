@@ -28,9 +28,6 @@ public class BarelyEnoughItems implements IModLifecycleListener {
 	public static void fancyFX(Minecraft mc, int id) {
 		if (!BEIConfig.fancySoundFX()) {
 			if (id == 3) {
-				mc.sndManager.playSoundFX("random.wood click", 1.0F, 1.0F);
-			}
-			if (id == 1) {
 				mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F);
 			}
 			return;
