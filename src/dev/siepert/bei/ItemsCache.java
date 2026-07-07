@@ -3,12 +3,15 @@ package dev.siepert.bei;
 import dev.siepert.bei.util.StackSorters;
 import net.minecraft.src.*;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
 public class ItemsCache implements IInventory {
+	private static final DecimalFormat MS_FORMAT = new DecimalFormat("#.###");
+
 	private final List<ItemStack> list;
 	private final List<ItemStack> filtered;
 
@@ -18,7 +21,7 @@ public class ItemsCache implements IInventory {
 	}
 
 	public void reindex() {
-		long start = System.currentTimeMillis();
+		long start = System.nanoTime();
 		System.out.println("[BEI] Re-indexing items cache...");
 		this.list.clear();
 		this.filtered.clear();
@@ -31,7 +34,7 @@ public class ItemsCache implements IInventory {
 			}
 		}
 		this.filtered.addAll(this.list);
-		System.out.println("[BEI] Done! (" + (System.currentTimeMillis() - start) + "ms)");
+		System.out.println("[BEI] Done! (" + MS_FORMAT.format((System.nanoTime() - start) * 0.001 * 0.001) + "ms)");
 	}
 
 	private int page = 0;

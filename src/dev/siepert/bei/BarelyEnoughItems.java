@@ -11,6 +11,7 @@ import net.minecraftborge.loader.event.lifecycle.ModInitializationEvent;
 import net.minecraftborge.loader.event.lifecycle.ModPostInitializationEvent;
 import net.minecraftborge.loader.event.lifecycle.ModPreInitializationEvent;
 import net.minecraftborge.loader.event.register.ExtractSoundsEvent;
+import net.minecraftborge.loader.event.world.ChangeWorldEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,9 +66,15 @@ public class BarelyEnoughItems implements IModLifecycleListener {
 	}
 
 	@EventHandler
-	public static void changeGUI(ChangeGuiEvent event) {
+	public static void injectCustomInventoryGUI(ChangeGuiEvent event) {
 		if (event.getNewScreen() instanceof GuiInventory) {
 			event.setNewScreen(new GuiInventoryBEI(Minecraft.getTheMinecraft().thePlayer));
 		}
+	}
+
+	@EventHandler
+	public static void reindexItemsCache(ChangeWorldEvent event) {
+		System.out.println("[BEI] Re-indexing just in case!");
+		ITEMS_CACHE.reindex();
 	}
 }

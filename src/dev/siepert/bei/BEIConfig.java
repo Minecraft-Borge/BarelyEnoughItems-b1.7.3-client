@@ -72,6 +72,8 @@ public class BEIConfig {
 							} else {
 								List<Integer> list = new ArrayList<>(itemIDs.length);
 								for (String itemID : itemIDs) {
+									itemID = itemID.trim();
+									if (itemID.isEmpty()) continue;
 									Item item = GameRegistries.ITEMS.getValue(itemID);
 									if (item != null) {
 										list.add(item.shiftedIndex);
