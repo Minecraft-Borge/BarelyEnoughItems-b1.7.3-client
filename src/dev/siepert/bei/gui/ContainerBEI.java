@@ -43,15 +43,17 @@ public class ContainerBEI extends Container {
 				if (stack != null) {
 					if (shift && player instanceof EntityPlayerSP) {
 						//cheat mode
+						GuiIngame ingameGUI = Minecraft.getTheMinecraft().ingameGUI;
 						if (BEIConfig.enableCheatMode()) {
 							ItemStack copy = stack.copy();
 							copy.stackSize = type == 0 ? copy.getMaxStackSize() : 1;
+							ingameGUI.addChatMessage("Given " + copy.stackSize + "* [" + StringTranslate.getInstance().translateNamedKey(copy.getItemName()) + "]");
 							player.inventory.addItemStackToInventory(copy);
 						} else {
 							if (!cheatModeWarning) {
 								cheatModeWarning = true;
-								Minecraft.getTheMinecraft().ingameGUI.addChatMessage("[BarelyEnoughItems] To enable cheat mode set");
-								Minecraft.getTheMinecraft().ingameGUI.addChatMessage("'enableCheatMode' to true in the configuration");
+								ingameGUI.addChatMessage("[BarelyEnoughItems] To enable cheat mode set");
+								ingameGUI.addChatMessage("'enableCheatMode' to true in the configuration");
 							}
 						}
 					} else {
