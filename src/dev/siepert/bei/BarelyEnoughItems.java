@@ -9,6 +9,8 @@ import net.minecraftborge.loader.event.IModLifecycleListener;
 import net.minecraftborge.loader.event.gui.ChangeGuiEvent;
 import net.minecraftborge.loader.event.lifecycle.ModInitializationEvent;
 import net.minecraftborge.loader.event.lifecycle.ModPostInitializationEvent;
+import net.minecraftborge.loader.event.lifecycle.ModPreInitializationEvent;
+import net.minecraftborge.loader.event.register.ExtractSoundsEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +23,25 @@ public class BarelyEnoughItems implements IModLifecycleListener {
 	}
 
 	public static final ItemsCache ITEMS_CACHE = new ItemsCache();
+
+	private static final String[] SOUND_FX = {"Back", "Click", "MoveCursor", "Scroll"};
+	public static void fancyFX(Minecraft mc, int id) {
+		if (!BEIConfig.fancySoundFX()) {
+			if (id == 3) {
+				mc.sndManager.playSoundFX("random.wood click", 1.0F, 1.0F);
+			}
+			if (id == 1) {
+				mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F);
+			}
+			return;
+		}
+		mc.sndManager.playSoundFX(MODID + SOUND_FX[id], 1.0F, 1.0F);
+	}
+
+	@Override
+	public void modPreInit(ModPreInitializationEvent event) {
+		BEIConfig.loadDefaults();
+	}
 
 	@Override
 	public void modInit(ModInitializationEvent event) {
@@ -38,6 +59,11 @@ public class BarelyEnoughItems implements IModLifecycleListener {
 	@Override
 	public void modPostInit(ModPostInitializationEvent event) {
 		ITEMS_CACHE.reindex();
+	}
+
+	@EventHandler
+	public static void registerSounds(ExtractSoundsEvent event) {
+		event.extract("assets/sounds/bei/");
 	}
 
 	@EventHandler

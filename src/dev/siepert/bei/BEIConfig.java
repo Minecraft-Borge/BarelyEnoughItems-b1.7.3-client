@@ -15,6 +15,7 @@ public class BEIConfig {
 	private static boolean hideBlocksWithoutStats = true;
 	private static List<Integer> hiddenItems = Collections.emptyList();
 	private static boolean enableCheatMode = false;
+	private static boolean fancySoundFX = true;
 
 	public static boolean instantSearchResults() {
 		return instantSearchResults;
@@ -28,7 +29,20 @@ public class BEIConfig {
 	public static boolean enableCheatMode() {
 		return enableCheatMode;
 	}
+	public static boolean fancySoundFX() {
+		return fancySoundFX;
+	}
 
+	public static void loadDefaults() {
+		instantSearchResults = false;
+		hideBlocksWithoutStats = true;
+		List<Integer> list = new ArrayList<>(2);
+		list.add(Block.pistonMoving.blockID);
+		list.add(Block.lockedChest.blockID);
+		hiddenItems = Collections.unmodifiableList(list);
+		enableCheatMode = false;
+		fancySoundFX = true;
+	}
 	public static void load(File config) throws IOException {
 		if (config != null && config.isFile()) {
 			try (BufferedReader reader = new BufferedReader(new InputStreamReader(Files.newInputStream(config.toPath())))) {
@@ -60,17 +74,12 @@ public class BEIConfig {
 						case "enableCheatMode":
 							enableCheatMode = "true".equalsIgnoreCase(kv[1]);
 							break;
+						case "fancySoundFX":
+							fancySoundFX = "true".equalsIgnoreCase(kv[1]);
+							break;
 					}
 				});
 			}
-		} else {
-			instantSearchResults = false;
-			hideBlocksWithoutStats = true;
-			List<Integer> list = new ArrayList<>(2);
-			list.add(Block.pistonMoving.blockID);
-			list.add(Block.lockedChest.blockID);
-			hiddenItems = Collections.unmodifiableList(list);
-			enableCheatMode = false;
 		}
 		save(config);
 	}
@@ -88,6 +97,7 @@ public class BEIConfig {
 		}
 		builder.append("\n");
 		builder.append("enableCheatMode:").append(enableCheatMode).append("\n");
+		builder.append("fancySoundFX:").append(fancySoundFX).append("\n");
 		try (FileWriter writer = new FileWriter(config)) {
 			writer.write(builder.toString());
 		}

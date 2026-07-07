@@ -108,18 +108,23 @@ public class GuiInventoryBEI extends GuiContainer {
 	@Override
 	protected void keyTyped(char character, int code) {
 		if (code == Keyboard.KEY_LEFT || code == Keyboard.KEY_PRIOR) {
-			if (BarelyEnoughItems.ITEMS_CACHE.pageDown()) this.mc.sndManager.playSoundFX("random.wood click", 1.0F, 1.0F);
+			if (BarelyEnoughItems.ITEMS_CACHE.pageDown()) {
+				BarelyEnoughItems.fancyFX(this.mc, 3);
+			}
 			this.title = BarelyEnoughItems.ITEMS_CACHE.getInvName();
 			return;
 		}
 		if (code == Keyboard.KEY_RIGHT || code == Keyboard.KEY_NEXT) {
-			if (BarelyEnoughItems.ITEMS_CACHE.pageUp()) this.mc.sndManager.playSoundFX("random.wood click", 1.0F, 1.0F);
+			if (BarelyEnoughItems.ITEMS_CACHE.pageUp()) {
+				BarelyEnoughItems.fancyFX(this.mc, 3);
+			}
 			this.title = BarelyEnoughItems.ITEMS_CACHE.getInvName();
 			return;
 		}
 		if (this.isGoogling) {
 			if (ChatAllowedCharacters.allowedCharacters.indexOf(character) >= 0) {
 				this.googleSearch += character;
+				BarelyEnoughItems.fancyFX(this.mc, 2);
 				if (BEIConfig.instantSearchResults()) {
 					this.applyGoogleSearch();
 					this.isGoogling = true;
@@ -129,6 +134,7 @@ public class GuiInventoryBEI extends GuiContainer {
 			if (code == Keyboard.KEY_DELETE || code == Keyboard.KEY_BACK) {
 				if (!this.googleSearch.isEmpty()) {
 					this.googleSearch = this.googleSearch.substring(0, this.googleSearch.length() - 1);
+					BarelyEnoughItems.fancyFX(this.mc, 2);
 					if (BEIConfig.instantSearchResults()) {
 						this.applyGoogleSearch();
 						this.isGoogling = true;
@@ -137,15 +143,18 @@ public class GuiInventoryBEI extends GuiContainer {
 				return;
 			}
 			if (code == Keyboard.KEY_RETURN) {
+				BarelyEnoughItems.fancyFX(this.mc, 1);
 				this.applyGoogleSearch();
 				return;
 			}
 			if (code == Keyboard.KEY_ESCAPE) {
+				BarelyEnoughItems.fancyFX(this.mc, 0);
 				this.googleSearch = "";
 				this.applyGoogleSearch();
 				return;
 			}
 		} else if (code == Keyboard.KEY_RETURN) {
+			BarelyEnoughItems.fancyFX(this.mc, 1);
 			this.isGoogling = true;
 		}
 		super.keyTyped(character, code);
