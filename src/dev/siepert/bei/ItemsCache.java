@@ -1,0 +1,105 @@
+package dev.siepert.bei;
+
+import net.minecraft.src.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+
+public class ItemsCache implements IInventory {
+	private final List<ItemStack> list;
+	private final List<ItemStack> filtered;
+
+	public ItemsCache() {
+		this.list = new ArrayList<>(32000);
+		this.filtered = new ArrayList<>(32000);
+	}
+
+	public void reindex() {
+		long start = System.currentTimeMillis();
+		System.out.println("[BEI] Re-indexing items cache...");
+		this.list.clear();
+		this.filtered.clear();
+		for (int i = 0; i < Item.ID_SIZE; i++) {
+			if (Item.itemsList[i] != null) {
+				Item item = Item.itemsList[i];
+				if (BEIConfig.hideBlocksWithoutStats() && item.shiftedIndex < 4096 && (!Block.blocksList[item.shiftedIndex].getEnableStats())) continue;
+				if (BEIConfig.hiddenItems().contains(item.shiftedIndex)) continue;
+				item.getSubItems(this.list);
+			}
+		}
+		this.filtered.addAll(this.list);
+		System.out.println("[BEI] Done! (" + (System.currentTimeMillis() - start) + "ms)");
+	}
+
+	private int page = 0;
+	private int pageSize = 0;
+	private int maxPage = 0;
+
+	public void setPageData(int pageSize) {
+		this.page = 0;
+		this.pageSize = pageSize;
+		this.maxPage = (this.filtered.size()-1) / this.pageSize;
+	}
+	public boolean pageUp() {
+		if (this.page < this.maxPage) {
+			this.page++;
+			return true;
+		} else return false;
+	}
+	public boolean pageDown() {
+		if (this.page > 0) {
+			this.page--;
+			return true;
+		} else return false;
+	}
+
+	public void filter(Predicate<ItemStack> filter) {
+		this.filtered.clear();
+		this.list.stream().filter(filter).forEach(this.filtered::add);
+	}
+
+	@Override
+	public int getSizeInventory() {
+		return this.pageSize;
+	}
+
+	@Override
+	public ItemStack getStackInSlot(int slot) {
+		int id = this.page * this.pageSize + slot;
+		return id < this.filtered.size() ? this.filtered.get(id) : null;
+	}
+
+	@Override
+	public ItemStack decrStackSize(int slot, int count) {
+		return null;
+	}
+
+	@Override
+	public void setInventorySlotContents(int slot, ItemStack stack) {
+
+	}
+
+	@Override
+	public String getInvName() {
+		StringTranslate translate = StringTranslate.getInstance();
+		String title = translate.translateKey("bei.itemsList");
+		if (this.filtered.isEmpty()) return title + " (" + translate.translateKey("bei.noResults") + ")";
+		return title + " (" + (this.page + 1) + "/" + (this.maxPage + 1) + ")";
+	}
+
+	@Override
+	public int getInventoryStackLimit() {
+		return 1;
+	}
+
+	@Override
+	public void onInventoryChanged() {
+
+	}
+
+	@Override
+	public boolean canInteractWith(EntityPlayer player) {
+		return true;
+	}
+}
