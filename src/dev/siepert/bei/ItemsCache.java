@@ -22,7 +22,6 @@ public class ItemsCache implements IInventory {
 
 	public void reindex() {
 		long start = System.nanoTime();
-		System.out.println("[BEI] Re-indexing items cache...");
 		this.list.clear();
 		this.filtered.clear();
 		for (int i = 0; i < Item.ID_SIZE; i++) {
@@ -34,7 +33,7 @@ public class ItemsCache implements IInventory {
 			}
 		}
 		this.filtered.addAll(this.list);
-		System.out.println("[BEI] Done! (" + MS_FORMAT.format((System.nanoTime() - start) * 0.001 * 0.001) + "ms)");
+		System.out.println("Indexing items took " + MS_FORMAT.format((System.nanoTime() - start) * 0.001 * 0.001) + "ms");
 	}
 
 	private int page = 0;

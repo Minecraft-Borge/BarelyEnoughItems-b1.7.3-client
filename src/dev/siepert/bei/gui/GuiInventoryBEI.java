@@ -156,7 +156,24 @@ public class GuiInventoryBEI extends GuiContainer {
 		} else if (code == Keyboard.KEY_RETURN) {
 			BarelyEnoughItems.fancyFX(this.mc, 1);
 			this.isGoogling = true;
+			return;
 		}
+
+		if (code == Keyboard.KEY_R) {
+			Slot hovered = this.getHoveredSlot();
+			if (hovered != null && hovered.getStack() != null) {
+				System.out.println("Recipes for " + StringTranslate.getInstance().translateNamedKey(hovered.getStack().getItemName()));
+				return;
+			}
+		}
+		if (code == Keyboard.KEY_U) {
+			Slot hovered = this.getHoveredSlot();
+			if (hovered != null && hovered.getStack() != null) {
+				System.out.println("Uses for " + StringTranslate.getInstance().translateNamedKey(hovered.getStack().getItemName()));
+				return;
+			}
+		}
+
 		super.keyTyped(character, code);
 	}
 
@@ -165,5 +182,20 @@ public class GuiInventoryBEI extends GuiContainer {
 		BarelyEnoughItems.ITEMS_CACHE.filter(this.googleSearch.isEmpty() ? StackFilters::any : StackFilters.named(this.googleSearch.toLowerCase(), false));
 		BarelyEnoughItems.ITEMS_CACHE.setPageData(9 * 5);
 		this.title = BarelyEnoughItems.ITEMS_CACHE.getInvName();
+	}
+
+	protected Slot getHoveredSlot() {
+		for (Slot slot : this.inventorySlots.slots) {
+			if (this.getIsMouseOverSlot(slot, (int) this.xSize_lo, (int) this.ySize_lo)) return slot;
+		}
+		return null;
+	}
+
+	private boolean getIsMouseOverSlot(Slot slot, int mouseX, int mouseY) {
+		int x = (this.width - this.xSize) / 2;
+		int y = (this.height - this.ySize) / 2;
+		mouseX -= x;
+		mouseY -= y;
+		return mouseX >= slot.xDisplayPosition - 1 && mouseX < slot.xDisplayPosition + 16 + 1 && mouseY >= slot.yDisplayPosition - 1 && mouseY < slot.yDisplayPosition + 16 + 1;
 	}
 }
