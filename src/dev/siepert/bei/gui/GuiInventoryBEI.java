@@ -162,7 +162,7 @@ public class GuiInventoryBEI extends GuiContainer {
 
 	protected void applyGoogleSearch() {
 		this.isGoogling = false;
-		BarelyEnoughItems.ITEMS_CACHE.filter(this.googleSearch.isEmpty() ? StackFilters::any : StackFilters.named(this.googleSearch, false));
+		BarelyEnoughItems.ITEMS_CACHE.filter(this.googleSearch.isEmpty() ? StackFilters::any : StackFilters.named(this.googleSearch.toLowerCase(), false));
 		BarelyEnoughItems.ITEMS_CACHE.setPageData(9 * 5);
 		this.title = BarelyEnoughItems.ITEMS_CACHE.getInvName();
 	}

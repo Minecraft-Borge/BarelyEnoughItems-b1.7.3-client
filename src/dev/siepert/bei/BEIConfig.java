@@ -1,5 +1,6 @@
 package dev.siepert.bei;
 
+import dev.siepert.bei.util.StackSorters;
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 import net.minecraftborge.loader.GameRegistries;
@@ -12,6 +13,7 @@ import java.util.List;
 
 public class BEIConfig {
 	private static boolean instantSearchResults = false;
+	private static StackSorters itemOrder = StackSorters.REGISTRY_ORDER;
 	private static boolean hideBlocksWithoutStats = true;
 	private static List<Integer> hiddenItems = Collections.emptyList();
 	private static boolean enableCheatMode = false;
@@ -19,6 +21,9 @@ public class BEIConfig {
 
 	public static boolean instantSearchResults() {
 		return instantSearchResults;
+	}
+	public static StackSorters itemOrder() {
+		return itemOrder;
 	}
 	public static boolean hideBlocksWithoutStats() {
 		return hideBlocksWithoutStats;
@@ -35,13 +40,14 @@ public class BEIConfig {
 
 	public static void loadDefaults() {
 		instantSearchResults = false;
+		itemOrder = StackSorters.REGISTRY_ORDER;
 		hideBlocksWithoutStats = true;
 		List<Integer> list = new ArrayList<>(2);
 		list.add(Block.pistonMoving.blockID);
 		list.add(Block.lockedChest.blockID);
 		hiddenItems = Collections.unmodifiableList(list);
 		enableCheatMode = false;
-		fancySoundFX = true;
+		fancySoundFX = false;
 	}
 	public static void load(File config) throws IOException {
 		if (config != null && config.isFile()) {
@@ -52,6 +58,9 @@ public class BEIConfig {
 					switch (kv[0]) {
 						case "instantSearchResults":
 							instantSearchResults = "true".equalsIgnoreCase(kv[1]);
+							break;
+						case "itemOrder":
+							itemOrder = StackSorters.get(kv[1]);
 							break;
 						case "hideBlocksWithoutStats":
 							hideBlocksWithoutStats = "true".equalsIgnoreCase(kv[1]);
@@ -89,6 +98,7 @@ public class BEIConfig {
 		if (!config.createNewFile()) throw new IOException("Could not create configuration file!");
 		StringBuilder builder = new StringBuilder();
 		builder.append("instantSearchResults:").append(instantSearchResults).append("\n");
+		builder.append("itemOrder:").append(itemOrder).append("\n");
 		builder.append("hideBlocksWithoutStats:").append(hideBlocksWithoutStats).append("\n");
 		builder.append("hiddenItems:");
 		for (int itemID : hiddenItems) {

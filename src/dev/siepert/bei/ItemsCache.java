@@ -1,8 +1,10 @@
 package dev.siepert.bei;
 
+import dev.siepert.bei.util.StackSorters;
 import net.minecraft.src.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -35,6 +37,7 @@ public class ItemsCache implements IInventory {
 	private int page = 0;
 	private int pageSize = 0;
 	private int maxPage = 0;
+	private Comparator<ItemStack> order = StackSorters.REGISTRY_ORDER;
 
 	public void setPageData(int pageSize) {
 		this.page = 0;
@@ -53,10 +56,13 @@ public class ItemsCache implements IInventory {
 			return true;
 		} else return false;
 	}
+	public void setStackOrder(Comparator<ItemStack> order) {
+		this.order = order;
+	}
 
 	public void filter(Predicate<ItemStack> filter) {
 		this.filtered.clear();
-		this.list.stream().filter(filter).forEach(this.filtered::add);
+		this.list.stream().filter(filter).sorted(this.order).forEach(this.filtered::add);
 	}
 
 	@Override

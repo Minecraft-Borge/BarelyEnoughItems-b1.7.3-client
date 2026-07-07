@@ -55,6 +55,7 @@ public class BarelyEnoughItems implements IModLifecycleListener {
 
 	@Override
 	public void modPostInit(ModPostInitializationEvent event) {
+		ITEMS_CACHE.setStackOrder(BEIConfig.itemOrder());
 		ITEMS_CACHE.reindex();
 	}
 
