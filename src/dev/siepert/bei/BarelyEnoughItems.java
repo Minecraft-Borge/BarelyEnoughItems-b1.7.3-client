@@ -74,7 +74,6 @@ public class BarelyEnoughItems implements IModLifecycleListener {
 
 	@EventHandler
 	public static void reindexItemsCache(ChangeWorldEvent event) {
-		System.out.println("[BEI] Re-indexing just in case!");
 		ITEMS_CACHE.reindex();
 	}
 }
