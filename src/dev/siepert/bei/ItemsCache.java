@@ -40,6 +40,7 @@ public class ItemsCache implements IInventory {
 		System.out.println("Indexing items took " + MS_FORMAT.format((System.nanoTime() - start) * 0.001 * 0.001) + "ms");
 	}
 
+	public String googleSearch = "";
 	private int page = 0;
 	private int pageSize = 0;
 	private int maxPage = 0;

@@ -15,7 +15,6 @@ public class GuiInventoryBEI extends GuiContainer {
 	private float xSize_lo;
 	private float ySize_lo;
 
-	private String googleSearch = "";
 	private boolean isGoogling = false;
 
 	private String title = BarelyEnoughItems.ITEMS_CACHE.getInvName();
@@ -37,10 +36,9 @@ public class GuiInventoryBEI extends GuiContainer {
 	@Override
 	public void initGui() {
 		this.controlList.clear();
-		this.googleSearch = "";
 		this.isGoogling = false;
 		InventoryDummy.INSTANCE.repopulate();
-		BarelyEnoughItems.ITEMS_CACHE.filter(StackFilters::any);
+		//BarelyEnoughItems.ITEMS_CACHE.filter(StackFilters::any);
 		BarelyEnoughItems.ITEMS_CACHE.setPageData(9 * 5);
 		this.title = BarelyEnoughItems.ITEMS_CACHE.getInvName();
 		this.player.craftingInventory = this.container();
@@ -99,7 +97,7 @@ public class GuiInventoryBEI extends GuiContainer {
 
 		this.drawString(this.mc.fontRenderer, this.title, x+176+3, y-12, 0xFFFFFF);
 
-		String google = this.googleSearch + (this.isGoogling && (((System.currentTimeMillis() / 500) & 1) == 0) ? "_" : "");
+		String google = BarelyEnoughItems.ITEMS_CACHE.googleSearch + (this.isGoogling && (((System.currentTimeMillis() / 500) & 1) == 0) ? "_" : "");
 		if (!google.isEmpty()) {
 			this.drawString(this.mc.fontRenderer, google, x + 176 + 3, y + this.ySize + 3, 0xFFFFFF);
 		}
@@ -127,7 +125,7 @@ public class GuiInventoryBEI extends GuiContainer {
 		}
 		if (this.isGoogling) {
 			if (ChatAllowedCharacters.allowedCharacters.indexOf(character) >= 0) {
-				this.googleSearch += character;
+				BarelyEnoughItems.ITEMS_CACHE.googleSearch += character;
 				BarelyEnoughItems.fancyFX(this.mc, 2);
 				if (BEIConfig.instantSearchResults()) {
 					this.applyGoogleSearch();
@@ -136,8 +134,9 @@ public class GuiInventoryBEI extends GuiContainer {
 				return;
 			}
 			if (code == Keyboard.KEY_DELETE || code == Keyboard.KEY_BACK) {
-				if (!this.googleSearch.isEmpty()) {
-					this.googleSearch = this.googleSearch.substring(0, this.googleSearch.length() - 1);
+				String google = BarelyEnoughItems.ITEMS_CACHE.googleSearch;
+				if (!google.isEmpty()) {
+					BarelyEnoughItems.ITEMS_CACHE.googleSearch = google.substring(0, google.length() - 1);
 					BarelyEnoughItems.fancyFX(this.mc, 2);
 					if (BEIConfig.instantSearchResults()) {
 						this.applyGoogleSearch();
@@ -153,7 +152,7 @@ public class GuiInventoryBEI extends GuiContainer {
 			}
 			if (code == Keyboard.KEY_ESCAPE) {
 				BarelyEnoughItems.fancyFX(this.mc, 0);
-				this.googleSearch = "";
+				BarelyEnoughItems.ITEMS_CACHE.googleSearch = "";
 				this.applyGoogleSearch();
 				return;
 			}
@@ -183,7 +182,8 @@ public class GuiInventoryBEI extends GuiContainer {
 
 	protected void applyGoogleSearch() {
 		this.isGoogling = false;
-		BarelyEnoughItems.ITEMS_CACHE.filter(this.googleSearch.isEmpty() ? StackFilters::any : StackFilters.named(this.googleSearch.toLowerCase(), false));
+		String google = BarelyEnoughItems.ITEMS_CACHE.googleSearch;
+		BarelyEnoughItems.ITEMS_CACHE.filter(google.isEmpty() ? StackFilters::any : StackFilters.named(google.toLowerCase(), false));
 		BarelyEnoughItems.ITEMS_CACHE.setPageData(9 * 5);
 		this.title = BarelyEnoughItems.ITEMS_CACHE.getInvName();
 	}
