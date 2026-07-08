@@ -29,7 +29,7 @@ public class GuiRecipes extends GuiContainer {
 	private String title = BarelyEnoughItems.ITEMS_CACHE.getInvName();
 
 	public GuiRecipes(GuiScreen parent, EntityPlayer player, LookupResult lookup) {
-		super(new ContainerRecipes(lookup));
+		super(new ContainerRecipes(lookup, parent));
 		this.parent = parent;
 		this.field_948_f = true;
 		this.player = player;
@@ -76,7 +76,7 @@ public class GuiRecipes extends GuiContainer {
 		IRecipeCategory<?> category = this.container().lookup.currentCategory();
 		List<RecipeContainer<?>> recipes = this.container().lookup.currentRecipes();
 		int width = category.getWidth();
-		int height = category.getHeight();
+		int height = category.getHeight() + 1;
 		int renderX = x+88-width/2;
 		int backdropID = this.mc.renderEngine.getTexture(category.getBackdropTexture());
 		this.mc.renderEngine.bindTexture(backdropID);
@@ -103,9 +103,9 @@ public class GuiRecipes extends GuiContainer {
 		}
 
 		String categoryTitle = this.container().lookup.currentCategory().getTitle();
-		this.fontRenderer.drawString(categoryTitle, x+88-this.fontRenderer.getStringWidth(categoryTitle)/2, y+2, 0x000000);
+		this.fontRenderer.drawString(categoryTitle, x+88-this.fontRenderer.getStringWidth(categoryTitle)/2, y+4, 0x000000);
 		String pageIndicator = (this.container().lookup.recipePage+1) + " / " + (this.container().maxPage+1);
-		this.fontRenderer.drawString(pageIndicator, x+88-this.fontRenderer.getStringWidth(pageIndicator)/2, y+11, 0x000000);
+		this.fontRenderer.drawString(pageIndicator, x+88-this.fontRenderer.getStringWidth(pageIndicator)/2, y+13, 0x000000);
 
 		for (int i = 0; i < this.container().pageSize; i++) {
 			int index = this.container().pageSize * this.container().lookup.recipePage + i;

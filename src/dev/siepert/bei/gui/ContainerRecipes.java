@@ -6,9 +6,8 @@ import dev.siepert.bei.apiimpl.InputSlot;
 import dev.siepert.bei.apiimpl.LookupResult;
 import dev.siepert.bei.apiimpl.RecipeContainer;
 import dev.siepert.bei.apiimpl.ResultSlot;
-import net.minecraft.src.Container;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IInventory;
+import net.minecraft.client.Minecraft;
+import net.minecraft.src.*;
 
 import java.util.List;
 
@@ -19,8 +18,11 @@ public class ContainerRecipes extends Container {
 	public int pageSize = 0;
 	public int maxPage = 0;
 
-	public ContainerRecipes(LookupResult lookup) {
+	private final GuiScreen parent;
+
+	public ContainerRecipes(LookupResult lookup, GuiScreen parent) {
 		this.lookup = lookup;
+		this.parent = parent;
 
 		IInventory inv = BarelyEnoughItems.ITEMS_CACHE;
 		for (int x = 0; x < 5; x++) {
@@ -60,7 +62,7 @@ public class ContainerRecipes extends Container {
 		int width = this.lookup.currentCategory().getWidth();
 		int height = this.lookup.currentCategory().getHeight() + 1;
 		List<RecipeContainer<?>> recipes = this.lookup.currentRecipes();
-		int x = 176/2 - width/2;
+		int x = 176 / 2 - width / 2;
 		for (int i = 0; i < this.pageSize; i++) {
 			int index = this.lookup.recipePage * this.pageSize + i;
 			if (index < recipes.size()) {
@@ -77,5 +79,23 @@ public class ContainerRecipes extends Container {
 				}
 			}
 		}
+	}
+
+	@Override
+	public ItemStack clickGuiSlot(int slotId, int type, boolean shift, EntityPlayer player) {
+		if (slotId < 0) return null;
+		if (slotId < this.slots.size()) {
+			Slot slot = this.slots.get(slotId);
+			if (slot != null && slot.getStack() != null) {
+				Minecraft mc = Minecraft.getTheMinecraft();
+				if (type == 0) {
+					GuiRecipes.getRecipesFor(mc, this.parent, slot.getStack());
+				}
+				if (type == 1) {
+					GuiRecipes.getUsesFor(mc, this.parent, slot.getStack());
+				}
+			}
+		}
+		return null;
 	}
 }
