@@ -2,6 +2,7 @@ package dev.siepert.bei.gui;
 
 import dev.siepert.bei.BEIConfig;
 import dev.siepert.bei.BarelyEnoughItems;
+import dev.siepert.bei.apiimpl.LookupResult;
 import dev.siepert.bei.apiimpl.LookupResultRecipes;
 import dev.siepert.bei.apiimpl.LookupResultUses;
 import dev.siepert.bei.util.InventoryDummy;
@@ -23,8 +24,8 @@ public class GuiRecipes extends GuiContainer {
 
 	private String title = BarelyEnoughItems.ITEMS_CACHE.getInvName();
 
-	public GuiRecipes(GuiScreen parent, EntityPlayer player) {
-		super(new ContainerRecipes());
+	public GuiRecipes(GuiScreen parent, EntityPlayer player, LookupResult lookup) {
+		super(new ContainerRecipes(lookup));
 		this.parent = parent;
 		this.field_948_f = true;
 		this.player = player;
@@ -44,7 +45,9 @@ public class GuiRecipes extends GuiContainer {
 		this.isGoogling = false;
 		InventoryDummy.INSTANCE.repopulate();
 		//BarelyEnoughItems.ITEMS_CACHE.filter(StackFilters::any);
+		int page = BarelyEnoughItems.ITEMS_CACHE.getPage();
 		BarelyEnoughItems.ITEMS_CACHE.setPageData(11 * 5);
+		BarelyEnoughItems.ITEMS_CACHE.setPage(page);
 		this.title = BarelyEnoughItems.ITEMS_CACHE.getInvName();
 		this.player.craftingInventory = this.container();
 	}
@@ -65,6 +68,11 @@ public class GuiRecipes extends GuiContainer {
 		int y = (this.height - this.ySize) / 2;
 		this.drawTexturedModalRect(x, y, 0, 0, this.xSize, this.ySize);
 
+		String categoryTitle = this.container().lookup.currentCategory().getTitle();
+		this.fontRenderer.drawString(categoryTitle, x+88-this.fontRenderer.getStringWidth(categoryTitle)/2, y+2, 0x000000);
+		String pageIndicator = (this.container().lookup.recipePage+1) + " / " + (this.container().maxPage+1);
+		this.fontRenderer.drawString(pageIndicator, x+88-this.fontRenderer.getStringWidth(pageIndicator)/2, y+11, 0x000000);
+
 		this.drawString(this.mc.fontRenderer, this.title, x+176+3, y-12, 0xFFFFFF);
 
 		String google = BarelyEnoughItems.ITEMS_CACHE.googleSearch + (this.isGoogling && (((System.currentTimeMillis() / 500) & 1) == 0) ? "_" : "");
@@ -75,18 +83,53 @@ public class GuiRecipes extends GuiContainer {
 
 	@Override
 	protected void keyTyped(char character, int code) {
-		if (code == Keyboard.KEY_LEFT || code == Keyboard.KEY_PRIOR) {
+		if (code == Keyboard.KEY_UP) {
 			if (BarelyEnoughItems.ITEMS_CACHE.pageDown()) {
 				BarelyEnoughItems.fancyFX(this.mc, 3);
 			}
 			this.title = BarelyEnoughItems.ITEMS_CACHE.getInvName();
 			return;
 		}
-		if (code == Keyboard.KEY_RIGHT || code == Keyboard.KEY_NEXT) {
+		if (code == Keyboard.KEY_DOWN) {
 			if (BarelyEnoughItems.ITEMS_CACHE.pageUp()) {
 				BarelyEnoughItems.fancyFX(this.mc, 3);
 			}
 			this.title = BarelyEnoughItems.ITEMS_CACHE.getInvName();
+			return;
+		}
+		LookupResult lookup = this.container().lookup;
+		if (code == Keyboard.KEY_PRIOR) {
+			if (lookup.categoryIndex > 0) {
+				lookup.categoryIndex--;
+			} else {
+				lookup.categoryIndex = lookup.categories.size() - 1;
+			}
+			this.mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F);
+			this.container().setCategory();
+			return;
+		}
+		if (code == Keyboard.KEY_NEXT) {
+			if (lookup.categoryIndex < lookup.categories.size()-1) {
+				lookup.categoryIndex++;
+			} else {
+				lookup.categoryIndex = 0;
+			}
+			this.mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F);
+			this.container().setCategory();
+			return;
+		}
+		if (code == Keyboard.KEY_LEFT) {
+			if (lookup.recipePage > 0) {
+				lookup.recipePage--;
+				this.mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F);
+			}
+			return;
+		}
+		if (code == Keyboard.KEY_RIGHT) {
+			if (lookup.recipePage < this.container().maxPage) {
+				lookup.recipePage++;
+				this.mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F);
+			}
 			return;
 		}
 		if (this.isGoogling) {
@@ -173,10 +216,10 @@ public class GuiRecipes extends GuiContainer {
 
 	public static void getRecipesFor(Minecraft mc, GuiScreen parent, ItemStack stack) {
 		LookupResultRecipes lookup = LookupResultRecipes.lookup(stack);
-		if (lookup.hasResults()) mc.displayGuiScreen(new GuiRecipes(parent, mc.thePlayer));
+		if (lookup.hasResults()) mc.displayGuiScreen(new GuiRecipes(parent, mc.thePlayer, lookup));
 	}
 	public static void getUsesFor(Minecraft mc, GuiScreen parent, ItemStack stack) {
 		LookupResultUses lookup = LookupResultUses.lookup(stack);
-		if (lookup.hasResults()) mc.displayGuiScreen(new GuiRecipes(parent, mc.thePlayer));
+		if (lookup.hasResults()) mc.displayGuiScreen(new GuiRecipes(parent, mc.thePlayer, lookup));
 	}
 }

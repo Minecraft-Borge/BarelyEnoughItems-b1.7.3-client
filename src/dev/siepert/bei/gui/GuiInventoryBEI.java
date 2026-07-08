@@ -109,14 +109,14 @@ public class GuiInventoryBEI extends GuiContainer {
 
 	@Override
 	protected void keyTyped(char character, int code) {
-		if (code == Keyboard.KEY_LEFT || code == Keyboard.KEY_PRIOR) {
+		if (code == Keyboard.KEY_UP) {
 			if (BarelyEnoughItems.ITEMS_CACHE.pageDown()) {
 				BarelyEnoughItems.fancyFX(this.mc, 3);
 			}
 			this.title = BarelyEnoughItems.ITEMS_CACHE.getInvName();
 			return;
 		}
-		if (code == Keyboard.KEY_RIGHT || code == Keyboard.KEY_NEXT) {
+		if (code == Keyboard.KEY_DOWN) {
 			if (BarelyEnoughItems.ITEMS_CACHE.pageUp()) {
 				BarelyEnoughItems.fancyFX(this.mc, 3);
 			}

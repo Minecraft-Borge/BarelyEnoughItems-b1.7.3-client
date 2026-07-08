@@ -2,6 +2,7 @@ package dev.siepert.bei;
 
 import dev.siepert.bei.util.StackSorters;
 import net.minecraft.src.*;
+import net.minecraftborge.loader.BorgeMath;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -65,6 +66,13 @@ public class ItemsCache implements IInventory {
 	}
 	public void setStackOrder(Comparator<ItemStack> order) {
 		this.order = order;
+	}
+
+	public int getPage() {
+		return this.page;
+	}
+	public void setPage(int page) {
+		this.page = Math.max(0, Math.min(page, this.maxPage - 1));
 	}
 
 	public void filter(Predicate<ItemStack> filter) {
