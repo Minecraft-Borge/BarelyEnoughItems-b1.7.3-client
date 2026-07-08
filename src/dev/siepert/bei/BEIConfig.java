@@ -18,6 +18,7 @@ public class BEIConfig {
 	private static List<Integer> hiddenItems = Collections.emptyList();
 	private static boolean enableCheatMode = false;
 	private static boolean fancySoundFX = true;
+	private static boolean displaySourceMod = true;
 
 	public static boolean instantSearchResults() {
 		return instantSearchResults;
@@ -37,6 +38,9 @@ public class BEIConfig {
 	public static boolean fancySoundFX() {
 		return fancySoundFX;
 	}
+	public static boolean displaySourceMod() {
+		return displaySourceMod;
+	}
 
 	public static void loadDefaults() {
 		instantSearchResults = false;
@@ -48,6 +52,7 @@ public class BEIConfig {
 		hiddenItems = Collections.unmodifiableList(list);
 		enableCheatMode = false;
 		fancySoundFX = false;
+		displaySourceMod = true;
 	}
 	public static void load(File config) throws IOException {
 		if (config != null && config.isFile()) {
@@ -88,6 +93,9 @@ public class BEIConfig {
 						case "fancySoundFX":
 							fancySoundFX = "true".equalsIgnoreCase(kv[1]);
 							break;
+						case "displaySourceMod":
+							displaySourceMod = "true".equalsIgnoreCase(kv[1]);
+							break;
 					}
 				});
 			}
@@ -110,6 +118,7 @@ public class BEIConfig {
 		builder.append("\n");
 		builder.append("enableCheatMode:").append(enableCheatMode).append("\n");
 		builder.append("fancySoundFX:").append(fancySoundFX).append("\n");
+		builder.append("displaySourceMod:").append(displaySourceMod).append("\n");
 		try (FileWriter writer = new FileWriter(config)) {
 			writer.write(builder.toString());
 		}

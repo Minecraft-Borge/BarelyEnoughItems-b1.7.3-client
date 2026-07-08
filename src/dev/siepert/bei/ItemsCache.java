@@ -72,7 +72,7 @@ public class ItemsCache implements IInventory {
 		return this.page;
 	}
 	public void setPage(int page) {
-		this.page = Math.max(0, Math.min(page, this.maxPage - 1));
+		this.page = Math.max(0, Math.min(page, this.maxPage));
 	}
 
 	public void filter(Predicate<ItemStack> filter) {

@@ -12,6 +12,7 @@ import dev.siepert.bei.util.StackFilters;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.*;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
@@ -143,25 +144,29 @@ public class GuiRecipes extends GuiContainer {
 		}
 		LookupResult lookup = this.container().lookup;
 		if (code == Keyboard.KEY_PRIOR || code == Keyboard.KEY_LBRACKET) {
-			if (lookup.categoryIndex > 0) {
-				lookup.categoryIndex--;
-			} else {
-				lookup.categoryIndex = lookup.categories.size() - 1;
+			if (lookup.categories.size() > 1) {
+				if (lookup.categoryIndex > 0) {
+					lookup.categoryIndex--;
+				} else {
+					lookup.categoryIndex = lookup.categories.size() - 1;
+				}
+				this.mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F);
+				this.container().setCategory();
+				this.container().setRecipes();
 			}
-			this.mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F);
-			this.container().setCategory();
-			this.container().setRecipes();
 			return;
 		}
 		if (code == Keyboard.KEY_NEXT || code == Keyboard.KEY_RBRACKET) {
-			if (lookup.categoryIndex < lookup.categories.size()-1) {
-				lookup.categoryIndex++;
-			} else {
-				lookup.categoryIndex = 0;
+			if (lookup.categories.size() > 1) {
+				if (lookup.categoryIndex < lookup.categories.size() - 1) {
+					lookup.categoryIndex++;
+				} else {
+					lookup.categoryIndex = 0;
+				}
+				this.mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F);
+				this.container().setCategory();
+				this.container().setRecipes();
 			}
-			this.mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F);
-			this.container().setCategory();
-			this.container().setRecipes();
 			return;
 		}
 		if (code == Keyboard.KEY_LEFT) {
@@ -236,6 +241,68 @@ public class GuiRecipes extends GuiContainer {
 
 		if(code == 1 || code == this.mc.gameSettings.keyBindInventory.keyCode) {
 			this.mc.displayGuiScreen(this.parent);
+		}
+	}
+
+	@Override
+	public void handleMouseInput() {
+		super.handleMouseInput();
+
+		int x = (this.width - this.xSize) / 2;
+		int y = (this.height - this.ySize) / 2;
+		int dx = Mouse.getEventX() * this.width / this.mc.displayWidth - x;
+		int dy = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1 - y;
+		int scroll = Mouse.getEventDWheel();
+
+		if (dy >= 0 && dy <= this.ySize) {
+			if (dx >= 176 && dx <= 256) {
+				if (scroll > 0) {
+					BarelyEnoughItems.ITEMS_CACHE.pageDown();
+					this.title = BarelyEnoughItems.ITEMS_CACHE.getInvName();
+				}
+				if (scroll < 0) {
+					BarelyEnoughItems.ITEMS_CACHE.pageUp();
+					this.title = BarelyEnoughItems.ITEMS_CACHE.getInvName();
+				}
+			}
+			if (dx >= 5 && dx <= 171) {
+				LookupResult lookup = this.container().lookup;
+				if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || dy < 20) {
+					if (lookup.categories.size() > 1) {
+						if (scroll > 0) {
+							if (lookup.categoryIndex > 0) {
+								lookup.categoryIndex--;
+							} else {
+								lookup.categoryIndex = lookup.categories.size() - 1;
+							}
+							this.container().setCategory();
+							this.container().setRecipes();
+						}
+						if (scroll < 0) {
+							if (lookup.categoryIndex < lookup.categories.size() - 1) {
+								lookup.categoryIndex++;
+							} else {
+								lookup.categoryIndex = 0;
+							}
+							this.container().setCategory();
+							this.container().setRecipes();
+						}
+					}
+				} else {
+					if (scroll > 0) {
+						if (lookup.recipePage > 0) {
+							lookup.recipePage--;
+							this.container().setRecipes();
+						}
+					}
+					if (scroll < 0) {
+						if (lookup.recipePage < this.container().maxPage) {
+							lookup.recipePage++;
+							this.container().setRecipes();
+						}
+					}
+				}
+			}
 		}
 	}
 

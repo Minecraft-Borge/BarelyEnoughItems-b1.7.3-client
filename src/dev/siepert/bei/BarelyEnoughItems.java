@@ -14,10 +14,7 @@ import dev.siepert.bei.recipes.category.RecipeCategoryFurnaceFuel;
 import dev.siepert.bei.recipes.category.RecipeCategorySmelting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.*;
-import net.minecraftborge.loader.FurnaceRecipesFix;
-import net.minecraftborge.loader.Ingredient;
-import net.minecraftborge.loader.RecipeShapedFix;
-import net.minecraftborge.loader.RecipeShapelessFix;
+import net.minecraftborge.loader.*;
 import net.minecraftborge.loader.event.EventBusSubscriber;
 import net.minecraftborge.loader.event.EventHandler;
 import net.minecraftborge.loader.event.EventPriority;
@@ -26,8 +23,10 @@ import net.minecraftborge.loader.event.gui.ChangeGuiEvent;
 import net.minecraftborge.loader.event.lifecycle.ModInitializationEvent;
 import net.minecraftborge.loader.event.lifecycle.ModPostInitializationEvent;
 import net.minecraftborge.loader.event.lifecycle.ModPreInitializationEvent;
+import net.minecraftborge.loader.event.misc.ItemTooltipEvent;
 import net.minecraftborge.loader.event.register.ExtractSoundsEvent;
 import net.minecraftborge.loader.event.world.ChangeWorldEvent;
+import net.minecraftborge.loader.tag.ItemTags;
 
 import java.io.File;
 import java.io.IOException;
@@ -115,6 +114,16 @@ public class BarelyEnoughItems implements IModLifecycleListener, IRecipesPlugin 
 	@EventHandler
 	public static void reindexItemsCache(ChangeWorldEvent event) {
 		ITEMS_CACHE.reindex();
+	}
+
+	@EventHandler(EventPriority.LOWEST)
+	public static void displaySourceMod(ItemTooltipEvent event) {
+		ItemStack stack = event.getStack();
+		if (BEIConfig.displaySourceMod() && !ItemTags.isItemEmpty(stack)) {
+			String modid = Namespace.extractModId(GameRegistries.ITEMS.getKey(stack.getItem()));
+			String name = modid != null ? ModList.get().getModContainer(ModList.get().getModIndex(modid)).name : "Minecraft";
+			event.getTooltip().add("§9" + name);
+		}
 	}
 
 	// IRecipesPlugin

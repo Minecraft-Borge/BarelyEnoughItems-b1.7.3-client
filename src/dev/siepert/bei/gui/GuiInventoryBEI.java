@@ -6,6 +6,7 @@ import dev.siepert.bei.util.InventoryDummy;
 import dev.siepert.bei.util.StackFilters;
 import net.minecraft.src.*;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
@@ -178,6 +179,28 @@ public class GuiInventoryBEI extends GuiContainer {
 		}
 
 		super.keyTyped(character, code);
+	}
+
+	@Override
+	public void handleMouseInput() {
+		super.handleMouseInput();
+
+		int x = (this.width - this.xSize) / 2;
+		int y = (this.height - this.ySize) / 2;
+		int dx = Mouse.getEventX() * this.width / this.mc.displayWidth - x;
+		int dy = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1 - y;
+
+		if (dx >= 176 && dx <= 256 && dy >= 0 && dy <= this.ySize) {
+			int scroll = Mouse.getEventDWheel();
+			if (scroll > 0) {
+				BarelyEnoughItems.ITEMS_CACHE.pageDown();
+				this.title = BarelyEnoughItems.ITEMS_CACHE.getInvName();
+			}
+			if (scroll < 0) {
+				BarelyEnoughItems.ITEMS_CACHE.pageUp();
+				this.title = BarelyEnoughItems.ITEMS_CACHE.getInvName();
+			}
+		}
 	}
 
 	protected void applyGoogleSearch() {
