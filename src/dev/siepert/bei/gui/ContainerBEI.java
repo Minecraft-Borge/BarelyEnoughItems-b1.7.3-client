@@ -57,8 +57,14 @@ public class ContainerBEI extends Container {
 							}
 						}
 					} else {
+						Minecraft mc = Minecraft.getTheMinecraft();
 						//recipe lookup time
-						System.out.println("pretend to see recipes pls");
+						if (type == 0) {
+							GuiRecipes.getRecipesFor(mc, mc.currentScreen, stack);
+						}
+						if (type == 1) {
+							GuiRecipes.getUsesFor(mc, mc.currentScreen, stack);
+						}
 					}
 				}
 			}

@@ -14,6 +14,8 @@ public interface IRecipeCategory<T> {
 	int getWidth();
 	int getHeight();
 
+	String getTitle();
+
 	void getItems(IIngredients ingredients, T recipe);
 
 	void drawBackdrop(Minecraft mc, Tessellator tes, int x, int y, T recipe, float pt); // batched !!!

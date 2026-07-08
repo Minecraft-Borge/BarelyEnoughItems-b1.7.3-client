@@ -6,18 +6,19 @@ import net.minecraft.src.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
 
 public class ItemsCache implements IInventory {
 	private static final DecimalFormat MS_FORMAT = new DecimalFormat("#.###");
 
-	private final List<ItemStack> list;
-	private final List<ItemStack> filtered;
+	private final ArrayList<ItemStack> list;
+	private final ArrayList<ItemStack> filtered;
 
 	public ItemsCache() {
-		this.list = new ArrayList<>(32000);
-		this.filtered = new ArrayList<>(32000);
+		this.list = new ArrayList<>();
+		this.filtered = new ArrayList<>();
 	}
 
 	public void reindex() {
@@ -33,6 +34,9 @@ public class ItemsCache implements IInventory {
 			}
 		}
 		this.filtered.addAll(this.list);
+
+		this.list.trimToSize();
+		this.filtered.trimToSize();
 		System.out.println("Indexing items took " + MS_FORMAT.format((System.nanoTime() - start) * 0.001 * 0.001) + "ms");
 	}
 
@@ -109,5 +113,9 @@ public class ItemsCache implements IInventory {
 	@Override
 	public boolean canInteractWith(EntityPlayer player) {
 		return true;
+	}
+
+	public Iterator<ItemStack> getItemsListIterator() {
+		return this.list.iterator();
 	}
 }
