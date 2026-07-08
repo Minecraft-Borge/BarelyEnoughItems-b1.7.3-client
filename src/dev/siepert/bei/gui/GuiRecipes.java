@@ -2,15 +2,19 @@ package dev.siepert.bei.gui;
 
 import dev.siepert.bei.BEIConfig;
 import dev.siepert.bei.BarelyEnoughItems;
+import dev.siepert.bei.api.IRecipeCategory;
 import dev.siepert.bei.apiimpl.LookupResult;
 import dev.siepert.bei.apiimpl.LookupResultRecipes;
 import dev.siepert.bei.apiimpl.LookupResultUses;
+import dev.siepert.bei.apiimpl.RecipeContainer;
 import dev.siepert.bei.util.InventoryDummy;
 import dev.siepert.bei.util.StackFilters;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.*;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
+
+import java.util.List;
 
 public class GuiRecipes extends GuiContainer {
 	public static final String TEXTURE = "assets/gui/" + BarelyEnoughItems.path("recipes.png");
@@ -68,10 +72,50 @@ public class GuiRecipes extends GuiContainer {
 		int y = (this.height - this.ySize) / 2;
 		this.drawTexturedModalRect(x, y, 0, 0, this.xSize, this.ySize);
 
+		Tessellator tes = Tessellator.instance;
+		IRecipeCategory<?> category = this.container().lookup.currentCategory();
+		List<RecipeContainer<?>> recipes = this.container().lookup.currentRecipes();
+		int width = category.getWidth();
+		int height = category.getHeight();
+		int renderX = x+88-width/2;
+		int backdropID = this.mc.renderEngine.getTexture(category.getBackdropTexture());
+		this.mc.renderEngine.bindTexture(backdropID);
+		tes.startDrawingQuads();
+		for (int i = 0; i < this.container().pageSize; i++) {
+			int index = this.container().pageSize * this.container().lookup.recipePage + i;
+			if (index < recipes.size()) {
+				int renderY = y + 3 + 20 + i * height;
+				RecipeContainer<?> recipe = recipes.get(index);
+
+				recipe.drawBackdrop(this.mc, tes, renderX, renderY, partialTick);
+			}
+		}
+		tes.draw();
+
+		for (int i = 0; i < this.container().pageSize; i++) {
+			int index = this.container().pageSize * this.container().lookup.recipePage + i;
+			if (index < recipes.size()) {
+				int renderY = y + 3 + 20 + i * height;
+				RecipeContainer<?> recipe = recipes.get(index);
+
+				recipe.drawExtras(this.mc, this.mc.renderEngine, renderX, renderY, this.mouseX, this.mouseY, partialTick);
+			}
+		}
+
 		String categoryTitle = this.container().lookup.currentCategory().getTitle();
 		this.fontRenderer.drawString(categoryTitle, x+88-this.fontRenderer.getStringWidth(categoryTitle)/2, y+2, 0x000000);
 		String pageIndicator = (this.container().lookup.recipePage+1) + " / " + (this.container().maxPage+1);
 		this.fontRenderer.drawString(pageIndicator, x+88-this.fontRenderer.getStringWidth(pageIndicator)/2, y+11, 0x000000);
+
+		for (int i = 0; i < this.container().pageSize; i++) {
+			int index = this.container().pageSize * this.container().lookup.recipePage + i;
+			if (index < recipes.size()) {
+				int renderY = y + 3 + 20 + i * height;
+				RecipeContainer<?> recipe = recipes.get(index);
+
+				recipe.drawTexts(this.mc, this.fontRenderer, renderX, renderY, this.mouseX, this.mouseY, partialTick);
+			}
+		}
 
 		this.drawString(this.mc.fontRenderer, this.title, x+176+3, y-12, 0xFFFFFF);
 
@@ -106,6 +150,7 @@ public class GuiRecipes extends GuiContainer {
 			}
 			this.mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F);
 			this.container().setCategory();
+			this.container().setRecipes();
 			return;
 		}
 		if (code == Keyboard.KEY_NEXT || code == Keyboard.KEY_RBRACKET) {
@@ -116,6 +161,7 @@ public class GuiRecipes extends GuiContainer {
 			}
 			this.mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F);
 			this.container().setCategory();
+			this.container().setRecipes();
 			return;
 		}
 		if (code == Keyboard.KEY_LEFT) {

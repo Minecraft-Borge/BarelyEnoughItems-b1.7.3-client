@@ -2,7 +2,11 @@ package dev.siepert.bei.apiimpl;
 
 import dev.siepert.bei.api.IIngredients;
 import dev.siepert.bei.api.IRecipeCategory;
+import net.minecraft.client.Minecraft;
+import net.minecraft.src.FontRenderer;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.RenderEngine;
+import net.minecraft.src.Tessellator;
 import net.minecraftborge.loader.Ingredient;
 
 import java.util.ArrayList;
@@ -33,6 +37,16 @@ public final class RecipeContainer<T> {
 	@SuppressWarnings("unchecked")
 	public <C> RecipeContainer<C> cast(Class<C> ignored) {
 		return (RecipeContainer<C>) this;
+	}
+
+	public void drawBackdrop(Minecraft mc, Tessellator tes, int renderX, int renderY, float pt) {
+		this.category.drawBackdrop(mc, tes, renderX, renderY, this.recipe, pt);
+	}
+	public void drawExtras(Minecraft mc, RenderEngine textures, int renderX, int renderY, int mouseX, int mouseY, float pt) {
+		this.category.drawExtras(mc, textures, renderX, renderY, mouseX, mouseY, this.recipe, pt);
+	}
+	public void drawTexts(Minecraft mc, FontRenderer font, int renderX, int renderY, int mouseX, int mouseY, float pt) {
+		this.category.drawTexts(mc, font, renderX, renderY, mouseX, mouseY, this.recipe, pt);
 	}
 
 	public static <T> RecipeContainer<T> create(IRecipeCategory<T> category, T recipe) {

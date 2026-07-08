@@ -49,7 +49,7 @@ public class RecipeCategoryCraftingShaped implements IRecipeCategory<IRecipe> {
 		Ingredient[][] in = getIngredients(recipe);
 		for (int x = 0; x < in.length; x++) {
 			for (int y = 0; y < in[0].length; y++) {
-				if (in[x][y] != null) ingredients.addInput(30 + 18*x, 17 + 18*y, in[x][y]);
+				if (in[x][y] != null) ingredients.addInput(2 + 18*x, 2 + 18*y, in[x][y]);
 			}
 		}
 		ingredients.addResult(96, 20, recipe.getRecipeOutput());

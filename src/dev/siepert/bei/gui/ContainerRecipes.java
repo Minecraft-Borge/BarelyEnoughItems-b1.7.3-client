@@ -60,18 +60,21 @@ public class ContainerRecipes extends Container {
 		int width = this.lookup.currentCategory().getWidth();
 		int height = this.lookup.currentCategory().getHeight() + 1;
 		List<RecipeContainer<?>> recipes = this.lookup.currentRecipes();
-		int y = 176/2 - width/2;
+		int x = 176/2 - width/2;
 		for (int i = 0; i < this.pageSize; i++) {
-			int x = 3 + 20 + i * height;
-			RecipeContainer<?> recipe = recipes.get(this.lookup.recipePage * this.pageSize + i);
-			InputSlot[] slotsIn = recipe.inputSlots;
-			ResultSlot[] slotsOut = recipe.resultSlots;
+			int index = this.lookup.recipePage * this.pageSize + i;
+			if (index < recipes.size()) {
+				int y = 3 + 20 + i * height;
+				RecipeContainer<?> recipe = recipes.get(index);
+				InputSlot[] slotsIn = recipe.inputSlots;
+				ResultSlot[] slotsOut = recipe.resultSlots;
 
-			for (int id = 0; id < slotsIn.length; id++) {
-				this.addSlot(new SlotRecipeIn(recipe, id, x, y));
-			}
-			for (int id = 0; id < slotsOut.length; id++) {
-				this.addSlot(new SlotRecipeOut(recipe, id, x, y));
+				for (int id = 0; id < slotsIn.length; id++) {
+					this.addSlot(new SlotRecipeIn(recipe, id, x, y));
+				}
+				for (int id = 0; id < slotsOut.length; id++) {
+					this.addSlot(new SlotRecipeOut(recipe, id, x, y));
+				}
 			}
 		}
 	}

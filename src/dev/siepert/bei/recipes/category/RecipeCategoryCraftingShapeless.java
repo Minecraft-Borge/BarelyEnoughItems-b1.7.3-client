@@ -52,7 +52,7 @@ public class RecipeCategoryCraftingShapeless implements IRecipeCategory<IRecipe>
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 3; x++) {
 				int idx = x + 3*y;
-				if (in.length > idx) ingredients.addInput(30 + 18*x, 17 + 18*y, in[idx]);
+				if (in.length > idx) ingredients.addInput(2 + 18*x, 2 + 18*y, in[idx]);
 				else break loop;
 			}
 		}
