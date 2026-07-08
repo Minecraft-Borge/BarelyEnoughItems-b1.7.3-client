@@ -6,15 +6,14 @@ import dev.siepert.bei.api.IRecipesPlugin;
 import dev.siepert.bei.apiimpl.CategoryRegistration;
 import dev.siepert.bei.apiimpl.RecipeContainer;
 import dev.siepert.bei.apiimpl.RecipeRegistration;
+import net.minecraft.src.ItemStack;
 import net.minecraftborge.MinecraftBorge;
+import net.minecraftborge.loader.FurnaceRecipesFix;
 import net.minecraftborge.loader.asm.ASMDataTable;
 import net.minecraftborge.loader.asm.ClassASMData;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BEIPluginManager {
 	private static final DecimalFormat MS_FORMAT = new DecimalFormat("#.###");
@@ -25,6 +24,7 @@ public class BEIPluginManager {
 	public static List<RecipeContainer<?>> indexedRecipes = Collections.emptyList();
 	public static List<RecipeContainer<?>> indexedRecipesWithResults = Collections.emptyList();
 	public static List<RecipeContainer<?>> indexedRecipesWithInputs = Collections.emptyList();
+	public static Map<Integer, List<RecipeContainer<?>>> indexedRecipesWithMachine = Collections.emptyMap();
 
 	public static void findPlugins(ASMDataTable asm) {
 		long start = System.nanoTime();
@@ -107,10 +107,15 @@ public class BEIPluginManager {
 		}
 		ArrayList<RecipeContainer<?>> withResults = new ArrayList<>(containers.size());
 		ArrayList<RecipeContainer<?>> withInputs = new ArrayList<>(containers.size());
+		HashMap<Integer, List<RecipeContainer<?>>> withMachines = new HashMap<>();
 
 		for (RecipeContainer<?> container : containers) {
 			if (container.results.length > 0) withResults.add(container);
 			if (container.inputs.length > 0) withInputs.add(container);
+			for (ItemStack machine : container.category.getCategoryMachines()) {
+				int packed = FurnaceRecipesFix.pack(machine.itemID, machine.getItemDamage());
+				withMachines.computeIfAbsent(packed, $ -> new ArrayList<>()).add(container);
+			}
 		}
 
 		containers.trimToSize();
@@ -120,8 +125,9 @@ public class BEIPluginManager {
 		indexedRecipes = Collections.unmodifiableList(containers);
 		indexedRecipesWithResults = Collections.unmodifiableList(withResults);
 		indexedRecipesWithInputs = Collections.unmodifiableList(withInputs);
+		indexedRecipesWithMachine = Collections.unmodifiableMap(withMachines);
 
-		System.out.println(containers.size() + " recipe containers (with results: " + withResults.size() + ", with inputs: " + withInputs.size() + ")");
+		System.out.println(containers.size() + " recipe containers (with results: " + withResults.size() + ", with inputs: " + withInputs.size() + ", machines: " + withMachines.size() + ")");
 		System.out.println("Indexing recipes took " + MS_FORMAT.format((System.nanoTime() - start) * 0.001 * 0.001) + "ms");
 	}
 

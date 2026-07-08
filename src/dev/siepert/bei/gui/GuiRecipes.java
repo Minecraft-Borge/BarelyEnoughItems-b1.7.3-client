@@ -98,7 +98,7 @@ public class GuiRecipes extends GuiContainer {
 			return;
 		}
 		LookupResult lookup = this.container().lookup;
-		if (code == Keyboard.KEY_PRIOR) {
+		if (code == Keyboard.KEY_PRIOR || code == Keyboard.KEY_LBRACKET) {
 			if (lookup.categoryIndex > 0) {
 				lookup.categoryIndex--;
 			} else {
@@ -108,7 +108,7 @@ public class GuiRecipes extends GuiContainer {
 			this.container().setCategory();
 			return;
 		}
-		if (code == Keyboard.KEY_NEXT) {
+		if (code == Keyboard.KEY_NEXT || code == Keyboard.KEY_RBRACKET) {
 			if (lookup.categoryIndex < lookup.categories.size()-1) {
 				lookup.categoryIndex++;
 			} else {
@@ -122,6 +122,7 @@ public class GuiRecipes extends GuiContainer {
 			if (lookup.recipePage > 0) {
 				lookup.recipePage--;
 				this.mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F);
+				this.container().setRecipes();
 			}
 			return;
 		}
@@ -129,6 +130,7 @@ public class GuiRecipes extends GuiContainer {
 			if (lookup.recipePage < this.container().maxPage) {
 				lookup.recipePage++;
 				this.mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F);
+				this.container().setRecipes();
 			}
 			return;
 		}

@@ -2,15 +2,21 @@ package dev.siepert.bei.gui;
 
 import dev.siepert.bei.BarelyEnoughItems;
 import dev.siepert.bei.api.IRecipeCategory;
+import dev.siepert.bei.apiimpl.InputSlot;
 import dev.siepert.bei.apiimpl.LookupResult;
+import dev.siepert.bei.apiimpl.RecipeContainer;
+import dev.siepert.bei.apiimpl.ResultSlot;
 import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
+
+import java.util.List;
 
 public class ContainerRecipes extends Container {
 	public final LookupResult lookup;
 	public final int slotEndIndex;
 
+	public int pageSize = 0;
 	public int maxPage = 0;
 
 	public ContainerRecipes(LookupResult lookup) {
@@ -26,6 +32,7 @@ public class ContainerRecipes extends Container {
 		this.slotEndIndex = this.slots.size();
 
 		this.setCategory();
+		this.setRecipes();
 	}
 
 	@Override
@@ -44,8 +51,28 @@ public class ContainerRecipes extends Container {
 		IRecipeCategory<?> category = this.lookup.categories.get(this.lookup.categoryIndex);
 		this.lookup.recipePage = 0;
 		int entries = this.lookup.recipes.get(this.lookup.categoryIndex).size();
-		int h = category.getHeight();
-		int pages = (200-6-20) / h;
-		this.maxPage = (entries - 1) / pages;
+		int h = category.getHeight() + 1;
+		this.pageSize = (200-6-20) / h;
+		this.maxPage = (entries - 1) / this.pageSize;
+	}
+	public void setRecipes() {
+		this.clearRecipeSlots();
+		int width = this.lookup.currentCategory().getWidth();
+		int height = this.lookup.currentCategory().getHeight() + 1;
+		List<RecipeContainer<?>> recipes = this.lookup.currentRecipes();
+		int y = 176/2 - width/2;
+		for (int i = 0; i < this.pageSize; i++) {
+			int x = 3 + 20 + i * height;
+			RecipeContainer<?> recipe = recipes.get(this.lookup.recipePage * this.pageSize + i);
+			InputSlot[] slotsIn = recipe.inputSlots;
+			ResultSlot[] slotsOut = recipe.resultSlots;
+
+			for (int id = 0; id < slotsIn.length; id++) {
+				this.addSlot(new SlotRecipeIn(recipe, id, x, y));
+			}
+			for (int id = 0; id < slotsOut.length; id++) {
+				this.addSlot(new SlotRecipeOut(recipe, id, x, y));
+			}
+		}
 	}
 }
