@@ -17,17 +17,17 @@ public final class InputSlot {
 		this.y = y;
 		this.input = input;
 		this.count = count;
-		this.displayItems = sanitize(input.getDisplayItems());
+		this.displayItems = sanitize(input.getDisplayItems(), count);
 	}
 	public InputSlot(int x, int y, Ingredient input) {
 		this(x, y, input, 1);
 	}
 
-	private static List<ItemStack> sanitize(List<ItemStack> stacks) {
+	private static List<ItemStack> sanitize(List<ItemStack> stacks, int count) {
 		List<ItemStack> list = new ArrayList<>(stacks.size());
 		for (ItemStack stack : stacks) {
 			ItemStack copy = stack.copy();
-			copy.stackSize = 1;
+			copy.stackSize = count;
 			if (copy.getItemDamage() == -1) copy.setItemDamage(0);
 			list.add(copy);
 		}
