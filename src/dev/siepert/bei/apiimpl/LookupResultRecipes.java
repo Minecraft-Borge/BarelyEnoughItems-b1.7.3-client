@@ -32,7 +32,6 @@ public class LookupResultRecipes extends LookupResult {
 				}
 			}
 		}
-		System.out.println(matching.size() + " matching recipes");
 		return matching.isEmpty() ? EMPTY : create(matching);
 	}
 	public static LookupResultRecipes create(List<RecipeContainer<?>> matching) {
