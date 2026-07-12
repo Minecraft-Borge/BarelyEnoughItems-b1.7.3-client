@@ -6,6 +6,10 @@ import dev.siepert.bei.api.IRecipesPlugin;
 import dev.siepert.bei.apiimpl.CategoryRegistration;
 import dev.siepert.bei.apiimpl.RecipeContainer;
 import dev.siepert.bei.apiimpl.RecipeRegistration;
+import dev.siepert.bei.apiimpl.ScreenRegistration;
+import dev.siepert.bei.gui.ScreenHandler;
+import net.minecraft.src.GuiCrafting;
+import net.minecraft.src.GuiScreen;
 import net.minecraft.src.ItemStack;
 import net.minecraftborge.MinecraftBorge;
 import net.minecraftborge.loader.FurnaceRecipesFix;
@@ -24,7 +28,10 @@ public class BEIPluginManager {
 	public static List<RecipeContainer<?>> indexedRecipes = Collections.emptyList();
 	public static List<RecipeContainer<?>> indexedRecipesWithResults = Collections.emptyList();
 	public static List<RecipeContainer<?>> indexedRecipesWithInputs = Collections.emptyList();
+	public static Map<IRecipeCategory<?>, List<RecipeContainer<?>>> indexedRecipesWithCategory = Collections.emptyMap();
 	public static Map<Integer, List<RecipeContainer<?>>> indexedRecipesWithMachine = Collections.emptyMap();
+	public static Map<Class<? extends GuiScreen>, List<ScreenHandler>> screenHandlers = Collections.emptyMap();
+	public static Set<Class<? extends GuiScreen>> compatibleItemsList = Collections.emptySet();
 
 	public static void findPlugins(ASMDataTable asm) {
 		long start = System.nanoTime();
@@ -107,6 +114,7 @@ public class BEIPluginManager {
 		}
 		ArrayList<RecipeContainer<?>> withResults = new ArrayList<>(containers.size());
 		ArrayList<RecipeContainer<?>> withInputs = new ArrayList<>(containers.size());
+		HashMap<IRecipeCategory<?>, List<RecipeContainer<?>>> withCategories = new HashMap<>(recipes.size());
 		HashMap<Integer, List<RecipeContainer<?>>> withMachines = new HashMap<>();
 
 		for (RecipeContainer<?> container : containers) {
@@ -116,19 +124,43 @@ public class BEIPluginManager {
 				int packed = FurnaceRecipesFix.pack(machine.itemID, machine.getItemDamage());
 				withMachines.computeIfAbsent(packed, $ -> new ArrayList<>()).add(container);
 			}
+			withCategories.computeIfAbsent(container.category, $ -> new ArrayList<>()).add(container);
 		}
 
 		containers.trimToSize();
 		withResults.trimToSize();
 		withInputs.trimToSize();
+		for (List<?> list : withCategories.values()) {
+			((ArrayList<?>)list).trimToSize();
+		}
+		for (List<?> list : withMachines.values()) {
+			((ArrayList<?>)list).trimToSize();
+		}
 
 		indexedRecipes = Collections.unmodifiableList(containers);
 		indexedRecipesWithResults = Collections.unmodifiableList(withResults);
 		indexedRecipesWithInputs = Collections.unmodifiableList(withInputs);
+		indexedRecipesWithCategory = Collections.unmodifiableMap(withCategories);
 		indexedRecipesWithMachine = Collections.unmodifiableMap(withMachines);
 
 		System.out.println(containers.size() + " recipe containers (with results: " + withResults.size() + ", with inputs: " + withInputs.size() + ", machines: " + withMachines.size() + ")");
 		System.out.println("Indexing recipes took " + MS_FORMAT.format((System.nanoTime() - start) * 0.001 * 0.001) + "ms");
+	}
+
+	public static void registerScreenHandlers() {
+		long start = System.nanoTime();
+
+		ScreenRegistration registration = new ScreenRegistration();
+		for (IRecipesPlugin plugin : plugins) {
+			plugin.registerScreenHandlers(registration);
+		}
+
+		registration.addScreenHandler(GuiCrafting.class, 89, 34, 24, 17, registration.getCraftingCategoryUIDs());
+
+		screenHandlers = registration.getScreenHandlers();
+		compatibleItemsList = registration.getCompatibleItemsList();
+
+		System.out.println("Screen handler registration took " + MS_FORMAT.format((System.nanoTime() - start) * 0.001 * 0.001) + "ms");
 	}
 
 	@SuppressWarnings("unchecked")

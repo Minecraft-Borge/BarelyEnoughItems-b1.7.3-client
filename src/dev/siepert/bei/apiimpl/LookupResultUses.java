@@ -1,6 +1,7 @@
 package dev.siepert.bei.apiimpl;
 
 import dev.siepert.bei.BEIPluginManager;
+import dev.siepert.bei.BarelyEnoughItems;
 import dev.siepert.bei.api.IRecipeCategory;
 import net.minecraft.src.ItemStack;
 import net.minecraftborge.loader.Ingredient;
@@ -20,8 +21,10 @@ public class LookupResultUses extends LookupResult {
 
 	public static LookupResultUses lookup(ItemStack item) {
 		if (ItemTags.isItemEmpty(item)) return EMPTY;
+
+		int machineLookup = BarelyEnoughItems.pack(item);
 		List<RecipeContainer<?>> indexed = BEIPluginManager.indexedRecipesWithInputs;
-		List<RecipeContainer<?>> matching = new ArrayList<>();
+		List<RecipeContainer<?>> matching = new ArrayList<>(BEIPluginManager.indexedRecipesWithMachine.getOrDefault(machineLookup, Collections.emptyList()));
 		loop:
 		for (RecipeContainer<?> container : indexed) {
 			for (Ingredient in : container.inputs) {

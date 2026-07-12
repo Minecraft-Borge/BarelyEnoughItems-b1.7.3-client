@@ -10,7 +10,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-public class GuiInventoryBEI extends GuiContainer {
+public class GuiInventoryBEI extends GuiContainer implements IGuiWrapper {
 	private final EntityPlayer player;
 
 	private float xSize_lo;
@@ -218,11 +218,8 @@ public class GuiInventoryBEI extends GuiContainer {
 		return null;
 	}
 
-	private boolean getIsMouseOverSlot(Slot slot, int mouseX, int mouseY) {
-		int x = (this.width - this.xSize) / 2;
-		int y = (this.height - this.ySize) / 2;
-		mouseX -= x;
-		mouseY -= y;
-		return mouseX >= slot.xDisplayPosition - 1 && mouseX < slot.xDisplayPosition + 16 + 1 && mouseY >= slot.yDisplayPosition - 1 && mouseY < slot.yDisplayPosition + 16 + 1;
+	@Override
+	public boolean isGoogling() {
+		return this.isGoogling;
 	}
 }

@@ -3,10 +3,7 @@ package dev.siepert.bei.gui;
 import dev.siepert.bei.BEIConfig;
 import dev.siepert.bei.BarelyEnoughItems;
 import dev.siepert.bei.api.IRecipeCategory;
-import dev.siepert.bei.apiimpl.LookupResult;
-import dev.siepert.bei.apiimpl.LookupResultRecipes;
-import dev.siepert.bei.apiimpl.LookupResultUses;
-import dev.siepert.bei.apiimpl.RecipeContainer;
+import dev.siepert.bei.apiimpl.*;
 import dev.siepert.bei.util.InventoryDummy;
 import dev.siepert.bei.util.StackFilters;
 import net.minecraft.client.Minecraft;
@@ -17,7 +14,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
-public class GuiRecipes extends GuiContainer {
+public class GuiRecipes extends GuiContainer implements IGuiWrapper {
 	public static final String TEXTURE = "assets/gui/" + BarelyEnoughItems.path("recipes.png");
 
 	private final GuiScreen parent;
@@ -266,6 +263,12 @@ public class GuiRecipes extends GuiContainer {
 				}
 			}
 			if (dx >= 5 && dx <= 171) {
+				if (Mouse.getEventButtonState() && dy < 20 && !(this.container().lookup instanceof LookupResultEverything)) {
+					LookupResultEverything lookup = LookupResultEverything.lookup();
+					if (lookup.hasResults()) this.mc.displayGuiScreen(new GuiRecipes(this.parent, this.mc.thePlayer, lookup));
+					this.mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F);
+					return;
+				}
 				LookupResult lookup = this.container().lookup;
 				if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || dy < 20) {
 					if (lookup.categories.size() > 1) {
@@ -320,13 +323,11 @@ public class GuiRecipes extends GuiContainer {
 		}
 		return null;
 	}
-
-	private boolean getIsMouseOverSlot(Slot slot, int mouseX, int mouseY) {
-		int x = (this.width - this.xSize) / 2;
-		int y = (this.height - this.ySize) / 2;
-		mouseX -= x;
-		mouseY -= y;
-		return mouseX >= slot.xDisplayPosition - 1 && mouseX < slot.xDisplayPosition + 16 + 1 && mouseY >= slot.yDisplayPosition - 1 && mouseY < slot.yDisplayPosition + 16 + 1;
+	public static Slot getHoveredSlot(GuiContainer screen, int mouseX, int mouseY) {
+		for (Slot slot : screen.inventorySlots.slots) {
+			if (screen.getIsMouseOverSlot(slot, mouseX, mouseY)) return slot;
+		}
+		return null;
 	}
 
 	public static void getRecipesFor(Minecraft mc, GuiScreen parent, ItemStack stack) {
@@ -336,5 +337,10 @@ public class GuiRecipes extends GuiContainer {
 	public static void getUsesFor(Minecraft mc, GuiScreen parent, ItemStack stack) {
 		LookupResultUses lookup = LookupResultUses.lookup(stack);
 		if (lookup.hasResults()) mc.displayGuiScreen(new GuiRecipes(parent, mc.thePlayer, lookup));
+	}
+
+	@Override
+	public boolean isGoogling() {
+		return this.isGoogling;
 	}
 }

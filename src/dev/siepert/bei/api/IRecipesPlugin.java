@@ -2,6 +2,7 @@ package dev.siepert.bei.api;
 
 import dev.siepert.bei.api.reg.ICategoryRegistration;
 import dev.siepert.bei.api.reg.IRecipeRegistration;
+import dev.siepert.bei.api.reg.IScreenRegistration;
 
 public interface IRecipesPlugin {
 	/**
@@ -12,4 +13,5 @@ public interface IRecipesPlugin {
 
 	default void registerCategories(ICategoryRegistration registration) {}
 	default void registerRecipes(IRecipeRegistration registration) {}
+	default void registerScreenHandlers(IScreenRegistration registration) {}
 }

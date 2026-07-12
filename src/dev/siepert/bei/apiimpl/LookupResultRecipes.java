@@ -19,6 +19,7 @@ public class LookupResultRecipes extends LookupResult {
 
 	public static LookupResultRecipes lookup(ItemStack item) {
 		if (ItemTags.isItemEmpty(item)) return EMPTY;
+
 		List<RecipeContainer<?>> indexed = BEIPluginManager.indexedRecipesWithResults;
 		List<RecipeContainer<?>> matching = new ArrayList<>();
 		loop:
