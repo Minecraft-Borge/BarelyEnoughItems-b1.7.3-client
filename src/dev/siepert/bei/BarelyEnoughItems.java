@@ -153,7 +153,6 @@ public class BarelyEnoughItems implements IModLifecycleListener, IRecipesPlugin 
 		GuiScreen screen = event.getScreen();
 		if (screen == null) return;
 		if (screen instanceof IGuiWrapper && ((IGuiWrapper)screen).isGoogling()) {
-			event.setCanceled(true);
 			return;
 		}
 		if (!(screen instanceof GuiContainer)) return;
