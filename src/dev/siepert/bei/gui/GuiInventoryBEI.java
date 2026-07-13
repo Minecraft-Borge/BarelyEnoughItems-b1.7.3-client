@@ -27,7 +27,7 @@ public class GuiInventoryBEI extends GuiContainer implements IGuiWrapper {
 		player.triggerAchievement(AchievementList.openInventory);
 		player.craftingInventory = this.container();
 
-		this.xSize = 256 + 9;
+		this.xSize = 256 + 10;
 	}
 
 	private ContainerBEI container() {

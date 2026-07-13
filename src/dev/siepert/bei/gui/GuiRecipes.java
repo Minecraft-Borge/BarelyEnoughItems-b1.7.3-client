@@ -33,7 +33,7 @@ public class GuiRecipes extends GuiContainer implements IGuiWrapper {
 		this.player = player;
 		player.craftingInventory = this.container();
 
-		this.xSize = 256 + 9;
+		this.xSize = 256 + 10;
 		this.ySize = 200;
 	}
 
