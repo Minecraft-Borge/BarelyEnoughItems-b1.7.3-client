@@ -4,3 +4,4 @@ Mod-Name: Barely Enough Items
 Mod-Description: b1.7.3 recipe viewer
 Mod-Version: 3.0.1
 Mod-Lifecycle-Listener: dev.siepert.bei.BarelyEnoughItems
+Mod-Update-URL: https://raw.githubusercontent.com/Minecraft-Borge/BarelyEnoughItems-b1.7.3-client/refs/heads/master/versions.xml
