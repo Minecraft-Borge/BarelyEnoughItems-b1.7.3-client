@@ -33,7 +33,7 @@ public class GuiRecipes extends GuiContainer implements IGuiWrapper {
 		this.player = player;
 		player.craftingInventory = this.container();
 
-		this.xSize = 256;
+		this.xSize = 256 + 9;
 		this.ySize = 200;
 	}
 
@@ -68,7 +68,7 @@ public class GuiRecipes extends GuiContainer implements IGuiWrapper {
 		this.mc.renderEngine.bindTexture(textureID);
 		int x = (this.width - this.xSize) / 2;
 		int y = (this.height - this.ySize) / 2;
-		this.drawTexturedModalRect(x, y, 0, 0, this.xSize, this.ySize);
+		this.drawTexturedModalRect(x, y, 0, 0, 176, this.ySize);
 
 		Tessellator tes = Tessellator.instance;
 		IRecipeCategory<?> category = this.container().lookup.currentCategory();

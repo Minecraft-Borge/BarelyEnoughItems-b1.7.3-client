@@ -27,7 +27,7 @@ public class GuiInventoryBEI extends GuiContainer implements IGuiWrapper {
 		player.triggerAchievement(AchievementList.openInventory);
 		player.craftingInventory = this.container();
 
-		this.xSize = 256;
+		this.xSize = 256 + 9;
 	}
 
 	private ContainerBEI container() {
@@ -64,7 +64,7 @@ public class GuiInventoryBEI extends GuiContainer implements IGuiWrapper {
 		this.mc.renderEngine.bindTexture(textureID);
 		int x = (this.width - this.xSize) / 2;
 		int y = (this.height - this.ySize) / 2;
-		this.drawTexturedModalRect(x, y, 0, 0, this.xSize, this.ySize);
+		this.drawTexturedModalRect(x, y, 0, 0, 176, this.ySize);
 		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		GL11.glEnable(GL11.GL_COLOR_MATERIAL);
 		GL11.glPushMatrix();
