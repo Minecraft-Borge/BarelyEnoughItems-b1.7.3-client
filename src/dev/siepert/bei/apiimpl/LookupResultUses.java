@@ -24,7 +24,7 @@ public class LookupResultUses extends LookupResult {
 
 		int machineLookup = BarelyEnoughItems.pack(item);
 		List<RecipeContainer<?>> indexed = BEIPluginManager.indexedRecipesWithInputs;
-		List<RecipeContainer<?>> matching = new ArrayList<>(BEIPluginManager.indexedRecipesWithMachine.getOrDefault(machineLookup, Collections.emptyList()));
+		List<RecipeContainer<?>> matching = new ArrayList<>();
 		loop:
 		for (RecipeContainer<?> container : indexed) {
 			for (Ingredient in : container.inputs) {
@@ -32,6 +32,12 @@ public class LookupResultUses extends LookupResult {
 					matching.add(container);
 					continue loop;
 				}
+			}
+		}
+		List<RecipeContainer<?>> byMachine = BEIPluginManager.indexedRecipesWithMachine.get(machineLookup);
+		if (byMachine != null && !byMachine.isEmpty()) {
+			for (RecipeContainer<?> recipe : byMachine) {
+				if (!matching.contains(recipe)) matching.add(recipe);
 			}
 		}
 		return matching.isEmpty() ? EMPTY : create(matching);
