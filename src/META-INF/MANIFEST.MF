@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 Mod-Id: bei
 Mod-Name: Barely Enough Items
 Mod-Description: b1.7.3 recipe viewer
-Mod-Version: 2.2.0
+Mod-Version: 3.0.0
 Mod-Lifecycle-Listener: dev.siepert.bei.BarelyEnoughItems

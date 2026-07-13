@@ -7,8 +7,10 @@ import dev.siepert.bei.apiimpl.CategoryRegistration;
 import dev.siepert.bei.apiimpl.RecipeContainer;
 import dev.siepert.bei.apiimpl.RecipeRegistration;
 import dev.siepert.bei.apiimpl.ScreenRegistration;
+import dev.siepert.bei.gui.GuiInventoryBEI;
 import dev.siepert.bei.gui.ScreenHandler;
 import net.minecraft.src.GuiCrafting;
+import net.minecraft.src.GuiInventory;
 import net.minecraft.src.GuiScreen;
 import net.minecraft.src.ItemStack;
 import net.minecraftborge.MinecraftBorge;
@@ -155,6 +157,8 @@ public class BEIPluginManager {
 			plugin.registerScreenHandlers(registration);
 		}
 
+		registration.addScreenHandler(GuiInventory.class, 124, 36, 24, 17, registration.getCraftingCategoryUIDs());
+		registration.addScreenHandler(GuiInventoryBEI.class, 124, 36, 24, 17, registration.getCraftingCategoryUIDs());
 		registration.addScreenHandler(GuiCrafting.class, 89, 34, 24, 17, registration.getCraftingCategoryUIDs());
 
 		screenHandlers = registration.getScreenHandlers();
